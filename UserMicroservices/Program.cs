@@ -2,13 +2,18 @@ using static UserMicroservices.Respository.DB.DbConnection;
 using UserMicroservices.Interface;
 using UserMicroservices.Respository.DAL;
 using UserMicroservices.Helpers;
+using System.Reflection.PortableExecutable;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure Kestrel to listen on port 80
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(80);
+});
 
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddScoped<SqlDataAccess>();
 builder.Services.AddScoped<IUser, UserMember>();
 builder.Services.AddScoped<IHelpers, Helpers>();
@@ -17,17 +22,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
-{
+// Configure the HTTP request pipeline
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
