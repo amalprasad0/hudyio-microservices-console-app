@@ -1,6 +1,0 @@
-@PostMicroservice_HostAddress = http://localhost:5120
-
-GET {{PostMicroservice_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
