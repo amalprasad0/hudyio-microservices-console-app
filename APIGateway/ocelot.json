@@ -1,0 +1,57 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7074/"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/health",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/User/health",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/loginUser",
+      "UpstreamHttpMethod": [ "Post"],
+      "DownstreamPathTemplate": "/api/user/loginUser",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/getuser",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/user/getUser",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/chat-hub",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DownstreamPathTemplate": "/chat-hub",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 4203
+        }
+      ],
+      
+
+    }
+  ]
+}

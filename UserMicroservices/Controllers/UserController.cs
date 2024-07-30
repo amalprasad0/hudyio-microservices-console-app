@@ -78,5 +78,11 @@ namespace UserMicroservices.Controllers
             bool isUpdated=_userService.UpdatePassword(userEmail, userName, userPassword);
             return Ok(isUpdated);
         }
+        [HttpGet]
+        [Route("health")]
+        public IActionResult checkHealth()
+        {
+            return Ok("Ok Health");
+        }
     }
 }
