@@ -1,8 +1,9 @@
 using static UserMicroservices.Respository.DB.DbConnection;
 using UserMicroservices.Interface;
 using UserMicroservices.Respository.DAL;
-using UserMicroservices.Helpers;
 using System.Reflection.PortableExecutable;
+using UserMicroservices.Repository.HelperRepository;
+using UserMicroservices.Dependencies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<SqlDataAccess>();
 builder.Services.AddScoped<IUser, UserMember>();
-builder.Services.AddScoped<IHelpers, Helpers>();
+builder.Services.AddScoped<IHelpers, HelperRepository>();
+builder.Services.AddScoped<Fast2SmsApi>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

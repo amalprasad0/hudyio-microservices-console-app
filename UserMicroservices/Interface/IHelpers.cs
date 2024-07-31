@@ -2,6 +2,6 @@
 {
     public interface IHelpers
     {
-       string HashPasskey(string passkey);
+       bool GenerateAndSendOTP(string mobile,int userId);
     }
 }

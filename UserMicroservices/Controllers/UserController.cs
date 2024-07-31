@@ -27,57 +27,15 @@ namespace UserMicroservices.Controllers
 
             try
             {
-                _userService.CreateUser(userDto);
-                return Ok("User created successfully.");
+               Response<bool> resp =_userService.StoreUserAndSendOTP(userDto);
+                return Ok(resp);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost]
-        [Route("loginUser")]
-        public IActionResult LoginUser([FromBody] LoginUser userDto)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(userDto.Username) || !string.IsNullOrEmpty(userDto.Password) || !string.IsNullOrEmpty(userDto.Email))
-                {
-
-                    bool isUserExists = _userService.loginUser(userDto);
-                    return Ok(isUserExists);
-                }
-                else {
-                    return BadRequest("User data is null.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-        [HttpGet]
-        [Route("getUser")]
-        public IActionResult GetUserDetails(string userEmail, string userName)
-        {
-            if (userEmail == null || userName == null)
-            {
-                return BadRequest("User data is null.");
-            }
-            List<UserData> userData =_userService.GetUserData(userEmail, userName);
-            return Ok(userData);
-        }
-        [HttpPost]
-        [Route("updateUserPassword")]
-        public IActionResult UpdateUserPassword(string? userName, string? userEmail,string userPassword)
-        {
-            /*if (userEmail == null || userName == null || userPassword==null)
-            {
-                return BadRequest("User data is null.");
-            }*/
-            bool isUpdated=_userService.UpdatePassword(userEmail, userName, userPassword);
-            return Ok(isUpdated);
-        }
+        
         [HttpGet]
         [Route("health")]
         public IActionResult checkHealth()
