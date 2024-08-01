@@ -8,7 +8,7 @@ services:
       dockerfile: UserMicroservices/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - CONNECTIONSTRINGS__DEFAULTCONNECTION=Data Source=192.168.3.6,1433;Initial Catalog=UserServiceDB;User Id=******;Password=******
+      - CONNECTIONSTRINGS__DEFAULTCONNECTION=Server=tcp:amalprasad.database.windows.net,1433;Initial Catalog=hudiyo_dev;Persist Security Info=False;User ID=amalprasad354;Password=amalkp@141;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;
     ports:
       - "4202:80"
     healthcheck:
