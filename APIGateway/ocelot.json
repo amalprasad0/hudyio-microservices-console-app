@@ -16,22 +16,10 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/gateway/loginUser",
+      "UpstreamPathTemplate": "/gateway/storeuserandsendotp",
       "UpstreamHttpMethod": [ "Post"],
-      "DownstreamPathTemplate": "/api/user/loginUser",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "host.docker.internal",
-          "Port": 4202
-        }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/gateway/getuser",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/user/getUser",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/user/createuser",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "host.docker.internal",

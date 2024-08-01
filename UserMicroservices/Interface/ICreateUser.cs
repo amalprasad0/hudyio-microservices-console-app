@@ -4,6 +4,7 @@ namespace UserMicroservices.Interface
 {
     public interface IUser
     {
-        Response<bool> StoreUserAndSendOTP(CreateUser user);
+        Response<int> StoreUserAndSendOTP(CreateUser user);
+        Response<bool> CheckOtpandRegisterUser(LoginParams loginParams);
     }
 }

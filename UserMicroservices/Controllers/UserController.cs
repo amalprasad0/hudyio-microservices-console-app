@@ -27,7 +27,7 @@ namespace UserMicroservices.Controllers
 
             try
             {
-               Response<bool> resp =_userService.StoreUserAndSendOTP(userDto);
+               Response<int> resp =_userService.StoreUserAndSendOTP(userDto);
                 return Ok(resp);
             }
             catch (Exception ex)

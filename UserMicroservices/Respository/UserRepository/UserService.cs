@@ -20,9 +20,9 @@ namespace UserMicroservices.Respository.DAL
             _helpers = helpers;
         }
 
-        public Response<bool> StoreUserAndSendOTP(CreateUser user)
+        public Response<int> StoreUserAndSendOTP(CreateUser user)
         {
-            var response = new Response<bool>();
+            var response = new Response<int>();
 
             try
             {
@@ -43,9 +43,17 @@ namespace UserMicroservices.Respository.DAL
                         cmd.Parameters.Add(userIdParam);
                         cmd.ExecuteNonQuery();
                         int newUserId = (int)userIdParam.Value;
+
                         bool isOtpDispatched = _helpers.GenerateAndSendOTP(user.Phone, newUserId);
-                        response.Success = true;
-                        response.Data = true; 
+                        if (isOtpDispatched) {
+                            response.Success = true;
+                            response.Data = newUserId;
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.Data = 1;
+                        }
                     }
                 }
             }
@@ -62,9 +70,16 @@ namespace UserMicroservices.Respository.DAL
 
             return response;
         }
+        public Response<bool> CheckOtpandRegisterUser(LoginParams loginParams)
+        {
 
+            var response = new Response<bool>();
+            response.Success = true;
+            response.Data = true;
+            return response;
+        }
 
-    }
+        }
 }
 
 
