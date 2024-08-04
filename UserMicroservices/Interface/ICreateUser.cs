@@ -6,5 +6,6 @@ namespace UserMicroservices.Interface
     {
         Response<int> StoreUserAndSendOTP(CreateUser user);
         Response<bool> CheckOtpandRegisterUser(LoginParams loginParams);
+        Response<bool> SaveConnectionId(SaveConnectionId saveConnectionId);
     }
 }

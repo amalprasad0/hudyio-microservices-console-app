@@ -113,7 +113,46 @@ namespace UserMicroservices.Respository.DAL
 
             return response;
         }
+        public Response<bool> SaveConnectionId(SaveConnectionId saveConnectionId)
+        {
+            var response = new Response<bool>();
+            bool success=false;
+            try
+            {
+                var sqlHelper = new SqlHelper(_sqlDataAccess);
+                sqlHelper.ExecuteStoredProcedure(
+                    "usp_StoreUserConnectionId",
+                    cmd =>
+                    {
+                        cmd.Parameters.AddWithValue("@mobileNumber", saveConnectionId.MobileNumber);
+                        cmd.Parameters.AddWithValue("@connectionId",saveConnectionId.ConnectionId );
+                        var userIdParam = new SqlParameter("@success", SqlDbType.Bit)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(userIdParam);
+                    },
+                    cmd =>
+                    {
+                        success = (bool)cmd.Parameters["@success"].Value;
+                    });
+                response.Success = true;
+                response.Data = success;
+                
+            }
+            catch (SqlException sqlEx)
+            {
+                response.Success = false;
+                response.ErrorMessage = $"SQL Error: {sqlEx.Message}";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.ErrorMessage = $"Unexpected Error{ex.Message}";
 
+            }
+            return response ;
+        }
 
     }
 }

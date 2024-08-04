@@ -53,6 +53,21 @@ namespace UserMicroservices.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPost]
+        [Route("saveconnectionid")]
+        public IActionResult SaveConnectionId(SaveConnectionId saveConnectionId)
+        {
+            try { 
+                if(saveConnectionId.ConnectionId==null || saveConnectionId.MobileNumber==null)
+                {
+                    return BadRequest("Request Params is null");
+                }
+                Response<bool> response = _userService.SaveConnectionId(saveConnectionId);
+                return Ok(response);
+            } catch (Exception ex) {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
             [HttpGet]
         [Route("health")]
         public IActionResult checkHealth()

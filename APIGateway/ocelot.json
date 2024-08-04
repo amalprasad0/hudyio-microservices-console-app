@@ -10,36 +10,62 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "localhost",
+          //"Host": "host.docker.internal",
           "Port": 4202
         }
       ]
     },
     {
       "UpstreamPathTemplate": "/gateway/storeuserandsendotp",
-      "UpstreamHttpMethod": [ "Post"],
+      "UpstreamHttpMethod": [ "Post" ],
       "DownstreamPathTemplate": "/api/user/createuser",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "localhost",
+          //"Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/checkOtpandActivateUser",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/user/checkOtpandActivateUser",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          //"Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/saveconnectionid",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/user/saveconnectionid",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          //"Host": "host.docker.internal",
           "Port": 4202
         }
       ]
     },
     {
       "UpstreamPathTemplate": "/gateway/chat-hub",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamHttpMethod": [ "GET", "wss" ],
       "DownstreamPathTemplate": "/chat-hub",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "ws",
       "DownstreamHostAndPorts": [
         {
-          "Host": "host.docker.internal",
+          "Host": "localhost",
           "Port": 4203
         }
-      ],
-      
-
+      ]
     }
   ]
 }
