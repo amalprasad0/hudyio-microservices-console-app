@@ -37,7 +37,7 @@ namespace ChatService.Hubs
                 try
                 {
                     var saveConnection = JsonContent.Create(saveConnectionId);
-                    var response = await _client.PostAsync("/gateway/saveconnectionid", saveConnection);
+                    var response = await _client.PostAsync("/api/User/saveconnectionid", saveConnection);
 
                     if (response.IsSuccessStatusCode)
                     {
