@@ -6,6 +6,7 @@ namespace ChatService.Hubs
     public sealed class ChatHub : Hub
     {
         private readonly ILogger<ChatHub> _logger;
+        private static readonly Dictionary<string, string> _connections = new Dictionary<string, string>();
 
         public ChatHub(ILogger<ChatHub> logger)
         {
@@ -20,8 +21,19 @@ namespace ChatService.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            _logger.LogInformation("User connected: {ConnectionId}", Context.ConnectionId);
-            await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
+            var mobileNumber = Context.GetHttpContext().Request.Query["mobileNumber"].ToString();
+
+            if (!string.IsNullOrEmpty(mobileNumber))
+            {
+                _connections[mobileNumber] = Context.ConnectionId;
+                _logger.LogInformation("User connected: {MobileNumber} with ConnectionId: {ConnectionId}", mobileNumber, Context.ConnectionId);
+                await Clients.All.SendAsync("UserConnected", mobileNumber);
+            }
+            else
+            {
+                _logger.LogWarning("Connection attempt without mobile number");
+            }
+
             await base.OnConnectedAsync();
         }
 

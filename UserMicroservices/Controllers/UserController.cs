@@ -35,11 +35,29 @@ namespace UserMicroservices.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
-        [HttpGet]
+        [HttpPost]
+        [Route("CheckOtpandActivateUser")]
+        public IActionResult CheckOTPandActivateUser([FromBody] LoginParams loginParams)
+        {
+            try
+            {
+                if (loginParams.otp == null || loginParams.userId == null)
+                {
+                    return BadRequest("Params is Null");
+
+                }
+                Response<bool> response = _userService.CheckOtpandRegisterUser(loginParams);
+                return Ok(response);
+            }
+            catch (Exception ex) {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+            [HttpGet]
         [Route("health")]
         public IActionResult checkHealth()
         {
+
             return Ok("Ok Health");
         }
     }
