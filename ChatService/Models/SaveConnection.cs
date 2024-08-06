@@ -7,6 +7,6 @@ namespace ChatService.Models
         [Required]
         public string ConnectionId { get; set; }
         [Required]
-        public string MobileNumber { get; set; }
+        public string userId { get; set; }
     }
 }

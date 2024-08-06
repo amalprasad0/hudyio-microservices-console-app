@@ -58,7 +58,7 @@ namespace UserMicroservices.Controllers
         public IActionResult SaveConnectionId(SaveConnectionId saveConnectionId)
         {
             try { 
-                if(saveConnectionId.ConnectionId==null || saveConnectionId.MobileNumber==null)
+                if(saveConnectionId.ConnectionId==null || saveConnectionId.userId==null)
                 {
                     return BadRequest("Request Params is null");
                 }
@@ -67,6 +67,25 @@ namespace UserMicroservices.Controllers
             } catch (Exception ex) {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+        [HttpPost]
+        [Route("removeconnectionid")]
+        public IActionResult RemoveUserConnectionId(string userId)
+        {
+            try
+            {
+                if (userId == "")
+                {
+                    return BadRequest("userId is Empty");
+                   
+                }
+                Response<bool> response =_userService.RemoveConnectionId(userId);
+                return Ok(response);
+            }
+            catch (Exception ex) {
+                return StatusCode(500, ex.Message);
+            }
+           
         }
             [HttpGet]
         [Route("health")]

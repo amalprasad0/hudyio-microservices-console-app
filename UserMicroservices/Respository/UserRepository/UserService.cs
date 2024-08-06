@@ -124,7 +124,7 @@ namespace UserMicroservices.Respository.DAL
                     "usp_StoreUserConnectionId",
                     cmd =>
                     {
-                        cmd.Parameters.AddWithValue("@mobileNumber", saveConnectionId.MobileNumber);
+                        cmd.Parameters.AddWithValue("@userId", saveConnectionId.userId);
                         cmd.Parameters.AddWithValue("@connectionId",saveConnectionId.ConnectionId );
                         var userIdParam = new SqlParameter("@success", SqlDbType.Bit)
                         {
@@ -152,6 +152,44 @@ namespace UserMicroservices.Respository.DAL
 
             }
             return response ;
+        }
+        public Response<bool> RemoveConnectionId(string userId)
+        {
+
+            var response = new Response<bool>();
+            try
+            {
+                bool success = false;
+                var sqlHelper = new SqlHelper(_sqlDataAccess);
+                sqlHelper.ExecuteStoredProcedure(
+                    "usp_RemoveConnectioId",
+                    cmd =>
+                    {
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        var userIdParam = new SqlParameter("@success", SqlDbType.Bit)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(userIdParam);
+                    },
+                    cmd =>
+                    {
+                        success = (bool)cmd.Parameters["@success"].Value;
+                    });
+                response.Success = true;
+                response.Data = success;
+            }
+            catch(SqlException sqlEx)
+            {
+                response.Success = false;
+                response.ErrorMessage = $"SQL Error: {sqlEx.Message}";
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.ErrorMessage = $"Failed to Remove ConnectionId{ex.Message}";
+            }
+            return response;
         }
 
     }

@@ -21,16 +21,16 @@ namespace ChatService.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var mobileNumber = Context.GetHttpContext().Request.Query["mobileNumber"].ToString();
+            var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
 
-            if (!string.IsNullOrEmpty(mobileNumber))
+            if (!string.IsNullOrEmpty(userId))
             {
-                _connections[mobileNumber] = Context.ConnectionId;
-                _logger.LogInformation("User connected: {MobileNumber} with ConnectionId: {ConnectionId}", mobileNumber, Context.ConnectionId);
+                _connections[userId] = Context.ConnectionId;
+                _logger.LogInformation("User connected: {MobileNumber} with ConnectionId: {ConnectionId}", userId, Context.ConnectionId);
 
                 var saveConnectionId = new SaveConnection
                 {
-                    MobileNumber = mobileNumber,
+                    userId = userId,
                     ConnectionId = Context.ConnectionId
                 };
 
@@ -41,7 +41,7 @@ namespace ChatService.Hubs
 
                     if (response.IsSuccessStatusCode)
                     {
-                        _logger.LogInformation("Successfully saved connection ID for {MobileNumber}", mobileNumber);
+                        _logger.LogInformation("Successfully saved connection ID for {MobileNumber}", userId);
                     }
                     else
                     {
@@ -51,10 +51,10 @@ namespace ChatService.Hubs
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error while saving connection ID for {MobileNumber}", mobileNumber);
+                    _logger.LogError(ex, "Error while saving connection ID for {MobileNumber}", userId);
                 }
 
-                await Clients.All.SendAsync("UserConnected", mobileNumber);
+                await Clients.All.SendAsync("UserConnected", userId);
             }
             else
             {
@@ -67,13 +67,15 @@ namespace ChatService.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var mobileNumber = _connections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
+            var userId = _connections.FirstOrDefault(x => x.Value == Context.ConnectionId).Key;
 
-            if (!string.IsNullOrEmpty(mobileNumber))
+            if (!string.IsNullOrEmpty(userId))
             {
-                _connections.Remove(mobileNumber);
-                _logger.LogInformation("User disconnected: {MobileNumber} with ConnectionId: {ConnectionId}", mobileNumber, Context.ConnectionId);
-                await Clients.All.SendAsync("UserDisconnected", mobileNumber);
+                var removeuserId = JsonContent.Create(userId);
+                var response = await _client.PostAsync("/api/User/removeconnectionid", removeuserId);
+                _connections.Remove(userId);
+                _logger.LogInformation("User disconnected: {MobileNumber} with ConnectionId: {ConnectionId}", userId, Context.ConnectionId);
+                await Clients.All.SendAsync("UserDisconnected", userId);
             }
 
             await base.OnDisconnectedAsync(exception);

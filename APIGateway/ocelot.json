@@ -56,6 +56,19 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/gateway/removeconnectionid",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/user/removeconnectionid",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          //"Host": "host.docker.internal",
+          "Port": 4202
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/gateway/chat-hub",
       "UpstreamHttpMethod": [ "GET", "wss" ],
       "DownstreamPathTemplate": "/chat-hub",
