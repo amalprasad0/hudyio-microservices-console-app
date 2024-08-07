@@ -81,16 +81,16 @@ namespace ChatService.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessage(string mobileNumber, string message)
+        public async Task SendMessage(string userId, string message)
         {
-            if (_connections.TryGetValue(mobileNumber, out var connectionId))
+            if (_connections.TryGetValue(userId, out var connectionId))
             {
                 await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
-                _logger.LogInformation("Sent message to {MobileNumber}: {Message}", mobileNumber, message);
+                _logger.LogInformation("Sent message to {userId}: {Message}", userId, message);
             }
             else
             {
-                _logger.LogWarning("Failed to send message. Mobile number not connected: {MobileNumber}", mobileNumber);
+                _logger.LogWarning("Failed to send message. Mobile number not connected: {userId}", userId);
             }
         }
     }
