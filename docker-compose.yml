@@ -31,6 +31,21 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+  cache-service:
+    image: ${DOCKER_REGISTRY-}cachemicroservice:v1
+    build:
+      context: .
+      dockerfile: CacheService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - amalprasad.redis.cache.windows.net:6380,password=S6D1GdPl5FzVjbv2Hw0SVQVrgnmK0hRTlAzCaDfPYJA=,ssl=True,abortConnect=False
+    ports:
+      - "4204:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   default:
