@@ -15,15 +15,16 @@ namespace CacheService.Repository
         {
             _db = ConnectionHelper.Connection.GetDatabase();
         }
-        public T GetCacheData<T>(string key)
+        public object GetCacheData(string key)
         {
             var value = _db.StringGet(key);
             if (!string.IsNullOrEmpty(value))
             {
-                return JsonConvert.DeserializeObject<T>(value);
+                return System.Text.Json.JsonSerializer.Deserialize<object>(value);
             }
-            return default;
+            return null;
         }
+
         public object RemoveData(string key)
         {
             bool _isKeyExist = _db.KeyExists(key);
@@ -37,7 +38,7 @@ namespace CacheService.Repository
         public bool SetCacheData<T>(string key, T value, DateTimeOffset expirationTime)
         {
             TimeSpan expiryTime = expirationTime.DateTime.Subtract(DateTime.Now);
-            var isSet = _db.StringSet(key, JsonConvert.SerializeObject(value), expiryTime);
+            var isSet = _db.StringSet(key, System.Text.Json.JsonSerializer.Serialize(value), expiryTime);
             return isSet;
         }
 

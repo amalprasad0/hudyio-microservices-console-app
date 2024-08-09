@@ -19,13 +19,14 @@ namespace CacheService.Controllers
         [HttpGet("{key}")]
         public IActionResult Get(string key)
         {
-            var value = _cacheRepository.GetCacheData<object>(key);
+            var value = _cacheRepository.GetCacheData(key);
             if (value == null)
             {
                 return NotFound();
             }
-            return Ok(value);
+            return new ObjectResult(value);
         }
+
 
         [HttpPost("set")]
         public IActionResult Set([FromBody] CacheEntry entry)
