@@ -89,7 +89,7 @@ namespace ChatService.Hubs
                         var response = await _cacheClient.DeleteAsync($"/api/Cache/{userId}");
                         if (response.IsSuccessStatusCode)
                         {
-                            _logger.LogInformation("Successfully removed connection ID for {userId}: {Response}", userId, response2);
+                            _logger.LogWarning("Successfully removed connection ID for {userId}: {Response}", userId, response2);
                         }
                         else
                         {
@@ -119,7 +119,6 @@ namespace ChatService.Hubs
             try
             {
                 var response = await _cacheClient.GetAsync($"/api/Cache/{userId}");
-
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();

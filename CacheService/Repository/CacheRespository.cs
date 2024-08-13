@@ -41,6 +41,11 @@ namespace CacheService.Repository
             var isSet = _db.StringSet(key, System.Text.Json.JsonSerializer.Serialize(value), expiryTime);
             return isSet;
         }
+        public bool EnqueueMessage<T>(string key,string valueDetails)
+        {
+            var isSet = _db.ListRightPush(key, valueDetails);
+            return true;
+        }
 
     }
 }
