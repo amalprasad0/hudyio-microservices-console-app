@@ -54,7 +54,7 @@ namespace CacheService.Controllers
         [HttpPost("SaveMessages")]
         public IActionResult AddQueueMessage(SaveRecentMessages saveRecentMessages)
         {
-            if (string.IsNullOrEmpty(saveRecentMessages.ToUserId) || saveRecentMessages.MessageData == null || saveRecentMessages.MessageData.Count < 1)
+            if (string.IsNullOrEmpty(saveRecentMessages.ToUserId) || saveRecentMessages.MessageData == null )
             {
                 return BadRequest("Key or messages are empty");
             }
@@ -70,7 +70,7 @@ namespace CacheService.Controllers
                 return BadRequest("Key is empty");
             }
 
-            var dequeuedMessage = _queueCache.GetAllMessages<List<UserMessage>>(key);
+            var dequeuedMessage = _queueCache.GetAllMessages<UserMessage>(key);
             if (dequeuedMessage != null)
             {
                 return Ok(dequeuedMessage);

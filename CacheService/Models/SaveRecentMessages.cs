@@ -3,6 +3,6 @@
     public class SaveRecentMessages
     {
         public string ToUserId { get; set; }
-        public List<UserMessage> MessageData { get; set; }
+        public UserMessage MessageData { get; set; }
     }
 }

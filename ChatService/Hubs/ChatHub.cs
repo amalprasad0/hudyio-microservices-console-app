@@ -148,15 +148,13 @@ namespace ChatService.Hubs
                     var userMessage = new CacheMessage
                     {
                         ToUserId = toUserId,
-                        MessageData = new List<UserMessage>
+                        MessageData = new UserMessage
                         {
-                            new UserMessage
-                            {
+                           
                                 MessageContent = message,
                                 MessageTime = DateTime.Now,
                                 SendByUser = userId
-                            }
-
+                           
                         }
                     };
                     bool isCached = await _messageQueue.AddToCacheQueue(userMessage);

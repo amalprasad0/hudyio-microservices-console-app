@@ -73,14 +73,13 @@ namespace ChatService.Hubs
                     var userMessage = new CacheMessage
                     {
                         ToUserId = "MSG"+toUserId,
-                        MessageData = new List<UserMessage>
+                        MessageData = new UserMessage
                     {
-                        new UserMessage
-                        {
+                        
                             MessageContent = message,
                             MessageTime = DateTime.Now,
                             SendByUser = Context.GetHttpContext().Request.Query["userId"].ToString()
-                        }
+                       
                     }
                     };
 
