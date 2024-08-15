@@ -17,14 +17,14 @@ namespace CacheService.Repository
         {
             _db = ConnectionHelper.Connection.GetDatabase();
         }
-        public Response<bool> EnqueueMessage<T>(string key,List<T> Messages)
+        public Response<bool> EnqueueMessage(SaveRecentMessages messages)
         {
             var response = new Response<bool>();
             try
             {
-                string serializedValue = System.Text.Json.JsonSerializer.Serialize(Messages);
+                string serializedValue = System.Text.Json.JsonSerializer.Serialize(messages.MessageData);
 
-                _db.ListRightPush(key, serializedValue);
+                _db.ListRightPush(messages.ToUserId, serializedValue);
                 response.Data = true;
                 response.Success=true;
                
@@ -37,33 +37,33 @@ namespace CacheService.Repository
             }
             return response;
         }
-        public Response<T> DequeueMessage<T>(string key)
+        public Response<List<T>> GetAllMessages<T>(string key)
         {
-            var response = new Response<T>();
+            var response = new Response<List<T>>();
 
             try
             {
-                var serializedValue = _db.ListLeftPop(key);
-
-                if (serializedValue.HasValue)
+                var serializedValues = _db.ListRange(key);
+                if (serializedValues.Length > 0)
                 {
-                    response.Data = JsonConvert.DeserializeObject<T>(serializedValue);
+                    response.Data = serializedValues.Select(x => JsonConvert.DeserializeObject<T>(x)).ToList();
                     response.Success = true;
                 }
                 else
                 {
                     response.Success = false;
-                    response.ErrorMessage = "No message found for the given key.";
+                    response.ErrorMessage = "No messages found for the given key.";
                 }
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.ErrorMessage = $"An error occurred while dequeuing the message: {ex.Message}";
+                response.ErrorMessage = $"An error occurred while retrieving the messages: {ex.Message}";
             }
 
             return response;
         }
+
 
     }
 }

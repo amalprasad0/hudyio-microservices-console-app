@@ -54,20 +54,13 @@ namespace CacheService.Controllers
         [HttpPost("SaveMessages")]
         public IActionResult AddQueueMessage(SaveRecentMessages saveRecentMessages)
         {
-            if (string.IsNullOrEmpty(saveRecentMessages.userId) || saveRecentMessages.Messages == null || saveRecentMessages.Messages.Count < 1)
+            if (string.IsNullOrEmpty(saveRecentMessages.ToUserId) || saveRecentMessages.MessageData == null || saveRecentMessages.MessageData.Count < 1)
             {
                 return BadRequest("Key or messages are empty");
             }
 
-            bool success = _queueCache.EnqueueMessage(saveRecentMessages.userId,saveRecentMessages.Messages);
-            if (success)
-            {
-                return Ok(true);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, false);
-            }
+           Response<bool> response = _queueCache.EnqueueMessage(saveRecentMessages);
+            return Ok(response);
         }
         [HttpGet("GetMessages")]
         public IActionResult DequeueMessage(string key)
@@ -77,7 +70,7 @@ namespace CacheService.Controllers
                 return BadRequest("Key is empty");
             }
 
-            var dequeuedMessage = _queueCache.DequeueMessage<List<string>>(key);
+            var dequeuedMessage = _queueCache.GetAllMessages<List<UserMessage>>(key);
             if (dequeuedMessage != null)
             {
                 return Ok(dequeuedMessage);

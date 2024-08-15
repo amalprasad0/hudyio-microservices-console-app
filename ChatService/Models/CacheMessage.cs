@@ -2,7 +2,7 @@
 {
     public class CacheMessage
     {
-        public string userId { get; set; }
-        List<UserMessage> messages { get; set; }
+        public string ToUserId { get; set; }
+        public List<UserMessage> MessageData { get; set; }
     }
 }

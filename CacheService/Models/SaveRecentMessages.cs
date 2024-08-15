@@ -2,7 +2,7 @@
 {
     public class SaveRecentMessages
     {
-        public string userId { get; set; }
-        public List<string> Messages { get; set; }
+        public string ToUserId { get; set; }
+        public List<UserMessage> MessageData { get; set; }
     }
 }

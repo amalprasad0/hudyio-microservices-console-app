@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-
+using ChatService.Interface;
 namespace ChatService.Hubs
 {
     public sealed class ChatHub : Hub
@@ -11,12 +11,14 @@ namespace ChatService.Hubs
         private static readonly Dictionary<string, string> _connections = new Dictionary<string, string>();
         private readonly HttpClient _userClient;
         private readonly HttpClient _cacheClient;
+        private readonly IMessageQueue _messageQueue;
 
-        public ChatHub(ILogger<ChatHub> logger, IHttpClientFactory clientFactory)
+        public ChatHub(ILogger<ChatHub> logger, IHttpClientFactory clientFactory,IMessageQueue messageQueue)
         {
             _logger = logger;
             _userClient = clientFactory.CreateClient("UserService");
             _cacheClient = clientFactory.CreateClient("CacheService");
+            _messageQueue = messageQueue;
 
         }
 
@@ -43,8 +45,10 @@ namespace ChatService.Hubs
                         var saveConnection = JsonContent.Create(userConnection);
                         //var response = await _userClient.PostAsync("/api/User/saveconnectionid", saveConnection);
                         var response = await _cacheClient.PostAsync("/api/Cache/set", saveConnection);
+                        var responseData = await response.Content.ReadAsStringAsync();
+                        var data = JsonSerializer.Deserialize<Response<bool>>(responseData);
 
-                        if (response.IsSuccessStatusCode)
+                        if (data.success)
                         {
                             _logger.LogInformation("Successfully saved connection ID for {MobileNumber} | Status Code: {StatusCode}", userId, response.StatusCode);
                         }
@@ -84,12 +88,11 @@ namespace ChatService.Hubs
                 {
                     try
                     {
-                        var response2 = _cacheClient.GetAsync($"/api/Cache/{userId}");
-
+                       
                         var response = await _cacheClient.DeleteAsync($"/api/Cache/{userId}");
                         if (response.IsSuccessStatusCode)
                         {
-                            _logger.LogWarning("Successfully removed connection ID for {userId}: {Response}", userId, response2);
+                            _logger.LogWarning("Successfully removed connection ID for {userId}: {Response}", userId, response);
                         }
                         else
                         {
@@ -114,30 +117,58 @@ namespace ChatService.Hubs
         }
 
 
-        public async Task SendMessage(string userId, string message)
+        public async Task SendMessage(string toUserId, string message)
         {
+            var connectionId = "";
+            var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
             try
             {
-                var response = await _cacheClient.GetAsync($"/api/Cache/{userId}");
+                
+                var response = await _cacheClient.GetAsync($"/api/Cache/{toUserId}");
                 if (response.IsSuccessStatusCode)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
 
-                    var connectionId = JsonSerializer.Deserialize<string>(responseData);
+                     connectionId = JsonSerializer.Deserialize<string>(responseData);
 
                     if (connectionId != null && !string.IsNullOrEmpty(connectionId))
                     {
                         await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
-                        _logger.LogInformation("Sent message to {userId}: {Message}", userId, message);
+                        _logger.LogInformation("Sent message to {userId}: {Message}", toUserId, message);
                     }
                     else
                     {
-                        _logger.LogWarning("Failed to send message. Connection ID not found for userId: {userId}", userId);
-                    }
+                        _logger.LogWarning("Failed to send message. Connection ID not found for userId: {userId}", toUserId);
+                        
+                    };
                 }
                 else
                 {
-                    _logger.LogWarning("Failed to retrieve connection ID from cache service. Status Code: {StatusCode}, UserId: {userId}", response.StatusCode, userId);
+                    
+                    var userMessage = new CacheMessage
+                    {
+                        ToUserId = toUserId,
+                        MessageData = new List<UserMessage>
+                        {
+                            new UserMessage
+                            {
+                                MessageContent = message,
+                                MessageTime = DateTime.Now,
+                                SendByUser = userId
+                            }
+
+                        }
+                    };
+                    bool isCached = await _messageQueue.AddToCacheQueue(userMessage);
+                    if (!isCached)
+                    {
+                        _logger.LogInformation("Couldn't Saved the Message on Reddis");
+                        await Clients.All.SendAsync("Not Delivared", message);
+                        return;
+                    }
+                    _logger.LogInformation("Saved the Message on Reddis");
+                     await Clients.All.SendAsync("Saved on Reddies", message);
+                    _logger.LogWarning("Failed to retrieve connection ID from cache service. Status Code: {StatusCode}, UserId: {userId}", response.StatusCode, toUserId);
                 }
             }
             catch (Exception ex)
