@@ -63,7 +63,38 @@ namespace CacheService.Repository
 
             return response;
         }
+        public Response<bool> DequeueMessageById(string userId, string messageId)
+        {
+            var response = new Response<bool>();
+            try
+            {
+                var messages = _db.ListRange(userId);
 
+                foreach (var message in messages)
+                {
+                    var deserializedMessage = System.Text.Json.JsonSerializer.Deserialize<UserMessage>(message);
+
+                    if (deserializedMessage.MessageId == messageId)
+                    {
+                        _db.ListRemove(userId, message); 
+                        response.Data = true;
+                        response.Success = true;
+                        return response;
+                    }
+                }
+
+                response.Data = false; 
+                response.Success = false;
+                response.ErrorMessage = "MessageId not found.";
+            }
+            catch (Exception ex)
+            {
+                response.Data = false;
+                response.Success = false;
+                response.ErrorMessage = ex.Message;
+            }
+            return response;
+        }
 
     }
 }

@@ -27,6 +27,7 @@ builder.Services.AddHttpClient("CacheService", client =>
 builder.Services.AddScoped<IMessageQueue, UserMessageRepository>();
 builder.Services.AddScoped<CacheServiceClient>();
 builder.Services.AddScoped<UserConnectionManager>();
+builder.Services.AddScoped<ApiUtility>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
 

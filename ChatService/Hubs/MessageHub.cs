@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatService.Hubs
 {
-    
-    public class MessageHub:Hub
+
+    public class MessageHub : Hub
     {
         private readonly UserConnectionManager _connectionManager;
         private readonly CacheServiceClient _cacheServiceClient;
@@ -29,30 +29,30 @@ namespace ChatService.Hubs
                 await Clients.All.SendAsync("User Id is Null");
                 return;
             }
-                _connectionManager.AddConnection(userId, Context.ConnectionId);
+            _connectionManager.AddConnection(userId, Context.ConnectionId);
 
-                var userConnection = new CacheRecord
-                {
-                    Value = Context.ConnectionId,
-                    Key = userId,
-                    Expiration = DateTime.UtcNow.AddDays(1)
-                };
+            var userConnection = new CacheRecord
+            {
+                Value = Context.ConnectionId,
+                Key = userId,
+                Expiration = DateTime.UtcNow.AddDays(1)
+            };
 
-                try
+            try
+            {
+                var isSaved = await _cacheServiceClient.SaveConnectionId(userConnection);
+                if (isSaved)
                 {
-                    var isSaved = await _cacheServiceClient.SaveConnectionId(userConnection);
-                    if (isSaved)
-                    {
-                        await Clients.All.SendAsync("UserConnected", userId);
-                    }
+                    await Clients.All.SendAsync("UserConnected", userId);
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogInformation($"Couldn't Stored ConnectionId {ex.Message}");
-                    return;
-                }
-            
-            
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Couldn't Stored ConnectionId {ex.Message}");
+                return;
+            }
+
+            await _messageQueueService.GetAllQueuedMessages(userId, Context.ConnectionId);
 
             await base.OnConnectedAsync();
         }
@@ -67,35 +67,56 @@ namespace ChatService.Hubs
         public async Task SendMessage(string toUserId, string message)
         {
             var connectionId = await _cacheServiceClient.GetConnectionId(toUserId);
-            try {
+            try
+            {
                 if (string.IsNullOrEmpty(connectionId))
                 {
+                    var messageId = Guid.NewGuid().ToString();
                     var userMessage = new CacheMessage
                     {
-                        ToUserId = "MSG"+toUserId,
+                        ToUserId = "msg" + toUserId,
                         MessageData = new UserMessage
-                    {
-                        
+                        {
+
                             MessageContent = message,
                             MessageTime = DateTime.Now,
-                            SendByUser = Context.GetHttpContext().Request.Query["userId"].ToString()
-                       
-                    }
+                            SendByUser = Context.GetHttpContext().Request.Query["userId"].ToString(),
+                            MessageId = messageId + toUserId
+
+                        }
                     };
 
                     await _messageQueueService.AddToCacheQueue(userMessage);
-                    await Clients.Caller.SendAsync("Reciecer is Offline");
+                    await Clients.Caller.SendAsync("ReciecerIsOffline");
 
                     return;
                 }
                 await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError($"Unexcepted Error while sending Message{ex.Message}");
                 await Clients.Caller.SendAsync("Unable to send Message", message);
             }
-            
+
+        }
+        public async Task GetDeliveryReport(string userId, string MessageId)
+        {
+            try
+            {
+                var response=await _messageQueueService.RemoveCachedMessage(userId, MessageId);
+                if(!response)
+                {
+                    await Clients.Caller.SendAsync($"NotRemoveCachedMessage: {MessageId}");
+                    return;
+                }
+                await Clients.Caller.SendAsync($"RemovedCachedMessage: {MessageId}");
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync($"Error Occured: {ex.Message}");
+            }
         }
     }
 }

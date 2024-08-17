@@ -6,5 +6,6 @@ namespace CacheService.Interfaces
     {
         Response<bool> EnqueueMessage(SaveRecentMessages saveRecentMessages);
         Response<List<T>> GetAllMessages<T>(string key);
+        Response<bool> DequeueMessageById(string userId, string messageId);
     }
 }

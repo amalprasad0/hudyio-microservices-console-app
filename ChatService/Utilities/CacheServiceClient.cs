@@ -8,10 +8,12 @@ namespace ChatService.Utilities
     public class CacheServiceClient
     {
         private readonly HttpClient _cacheClient;
+        private readonly ApiUtility _apiUtility;    
 
-        public CacheServiceClient(IHttpClientFactory clientFactory)
+        public CacheServiceClient(IHttpClientFactory clientFactory,ApiUtility apiUtility)
         {
             _cacheClient = clientFactory.CreateClient("CacheService");
+            _apiUtility = apiUtility;
         }
 
         public async Task<bool> SaveConnectionId(CacheRecord cacheRecord)
@@ -39,5 +41,18 @@ namespace ChatService.Utilities
             }
             return null;
         }
+        public async Task<Response<bool>> GetDeliveryReport(CachedMessageRemoval messageRemoval)
+        {
+           
+            
+
+               var response = await _apiUtility.PostToApiAsync<bool>("/api/cache/Removecachedmessage", messageRemoval);
+                if (response.success)
+                {
+                    return response;
+                }
+                return null ;
+            
+        } 
     }
 }

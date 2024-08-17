@@ -80,8 +80,15 @@ namespace CacheService.Controllers
                 return NotFound("No messages in the queue or key does not exist");
             }
         }
-
+        [HttpPost("Removecachedmessage")]
+        public IActionResult RemoveCachedMessage(CachedMessageRemoval messageRemoval)
+        {
+            if(string.IsNullOrEmpty(messageRemoval.userId) || string.IsNullOrEmpty(messageRemoval.messageId))
+            {
+                return BadRequest("Request data is null");
+            }
+           Response<bool> response= _queueCache.DequeueMessageById(messageRemoval.userId, messageRemoval.messageId);
+            return Ok(response);
+        }
     }
-
-
 }

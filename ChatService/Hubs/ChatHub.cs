@@ -68,7 +68,7 @@ namespace ChatService.Hubs
                     _logger.LogError(ex, "General error while handling user connection for {MobileNumber}", userId);
                 }
 
-                await Clients.All.SendAsync("UserConnected", userId);
+                await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
             }
             else
             {
