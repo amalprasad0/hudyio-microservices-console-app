@@ -47,6 +47,22 @@ services:
       timeout: 10s
       retries: 3
 
+  messageManagement-service:
+    image: ${DOCKER_REGISTRY-}messagemanagementservice:v1
+    build:
+      context: .
+      dockerfile: MessageManagementService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTIONSTRINGS__DEFAULTCONNECTION=Server=tcp:amalprasad.database.windows.net,1433;Initial Catalog=hudiyo_dev;Persist Security Info=False;User ID=amalprasad354;Password=amalkp@141;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=60;
+    ports:
+      - "4205:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   default:
     name: hudyio-network

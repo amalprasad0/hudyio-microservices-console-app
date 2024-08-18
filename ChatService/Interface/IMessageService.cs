@@ -1,7 +1,9 @@
-﻿namespace ChatService.Interface
+﻿using ChatService.Models;
+
+namespace ChatService.Interface
 {
     public interface IMessageService
     {
-        Task SendMessageAsync(string toUserId, string message, string fromUserId);
+        Task<bool> StoreMessage(StoreUserMessage message);
     }
 }

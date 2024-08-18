@@ -12,12 +12,14 @@ namespace ChatService.Hubs
         private readonly CacheServiceClient _cacheServiceClient;
         private readonly IMessageQueue _messageQueueService;
         private readonly ILogger<MessageHub> _logger;
-        public MessageHub(UserConnectionManager connectionManager, CacheServiceClient cacheServiceClient, IMessageQueue messageQueueService, ILogger<MessageHub> logger)
+        private readonly IMessageService _messageService;
+        public MessageHub(UserConnectionManager connectionManager, CacheServiceClient cacheServiceClient, IMessageQueue messageQueueService, ILogger<MessageHub> logger, IMessageService messageService)
         {
             _connectionManager = connectionManager;
             _cacheServiceClient = cacheServiceClient;
             _messageQueueService = messageQueueService;
             _logger = logger;
+            _messageService = messageService;
         }
         public override async Task OnConnectedAsync()
         {
@@ -67,8 +69,20 @@ namespace ChatService.Hubs
         public async Task SendMessage(string toUserId, string message)
         {
             var connectionId = await _cacheServiceClient.GetConnectionId(toUserId);
+            var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
             try
             {
+                var storeUserMessage = new StoreUserMessage
+                {
+                    cachedMessageId = 0,
+                    messageContent = message,
+                    fromUserId = int.Parse(userId),
+                    toUserId = int.Parse(toUserId),
+                    hasFile = false,
+                    fileType = "N/A",
+                    fileUrl = "N?A"
+                };
+                await _messageService.StoreMessage(storeUserMessage);
                 if (string.IsNullOrEmpty(connectionId))
                 {
                     var messageId = Guid.NewGuid().ToString();
@@ -88,11 +102,11 @@ namespace ChatService.Hubs
 
                     await _messageQueueService.AddToCacheQueue(userMessage);
                     await Clients.Caller.SendAsync("ReciecerIsOffline");
-
                     return;
                 }
+                
                 await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
-
+               
             }
             catch (Exception ex)
             {
@@ -115,7 +129,7 @@ namespace ChatService.Hubs
             }
             catch (Exception ex)
             {
-                await Clients.Caller.SendAsync($"Error Occured: {ex.Message}");
+                await Clients.Caller.SendAsync($"ErrorOccured: {ex.Message}");
             }
         }
     }
