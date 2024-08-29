@@ -25,9 +25,9 @@ namespace CacheService.Repository
                 string serializedValue = System.Text.Json.JsonSerializer.Serialize(messages.MessageData);
 
                 _db.ListRightPush(messages.ToUserId, serializedValue);
+                _db.KeyExpire(messages.ToUserId, TimeSpan.FromHours(6));
                 response.Data = true;
                 response.Success=true;
-               
             }
             catch(Exception ex) 
             {

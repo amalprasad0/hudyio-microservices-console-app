@@ -1,28 +1,24 @@
-﻿using ChatService.Interface;
-using ChatService.Utilities;
-using ChatService.Models;
-
-namespace ChatService.Repository.MessageStoreService
+﻿namespace ChatService.Repository.MessageStoreService
 {
-    public class MessageService : IMessageService
+    using ChatService.Interface;
+    using ChatService.Models;
+    using ChatService.Utilities;
+
+        public class MessageService : IMessageService
     {
-        private readonly ApiUtility _apiUtility;
-        public MessageService(ApiUtility apiUtility) {
+                private readonly ApiUtility _apiUtility;
+
+                public MessageService(ApiUtility apiUtility)
+        {
             _apiUtility = apiUtility;
         }
-        public async Task<bool> StoreMessage(StoreUserMessage message)
+
+                public async Task<bool> StoreMessage(StoreUserMessage message)
         {
-            try
-            {
-                var response = await _apiUtility.MessagePostApi<bool>("/api/usermessage/storemessage", message);
-                if (response == null) { 
-                return false;
-                }
-                return response.success;
-            }
-            catch (Exception ex) {
-                return false;
-            }
+
+            var response = await _apiUtility.MessagePostApi<bool>("/api/usermessage/storemessage", message);
+
+            return response.success;
         }
     }
 }
