@@ -96,11 +96,13 @@ namespace CacheService.Controllers
             return Ok(response);
         }
         [HttpGet("Test")]
-        public IActionResult Test()
+        public IActionResult SqlCacheMigration()
         {
-           
-          _syncDataToSql.SyncDataToSql();
-            return Ok();
+            Response<bool> response = new Response<bool>();
+          var isSuccess=_syncDataToSql.SyncDataToSql();
+            response.success=true;
+            response.data = isSuccess;
+          return Ok(response);
         }
     }
 }

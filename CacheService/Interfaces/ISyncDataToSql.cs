@@ -2,6 +2,6 @@
 {
     public interface ISyncDataToSql
     {
-        Task<bool> SyncDataToSql();
+        bool SyncDataToSql();
     }
 }

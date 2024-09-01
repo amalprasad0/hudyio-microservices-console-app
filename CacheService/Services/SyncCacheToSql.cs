@@ -15,18 +15,19 @@ namespace CacheService.Services
             _msgMngClient = clientFactory.CreateClient("MessageMngService");
             _apiService = apiService;
         }
-        public async Task<bool> SyncDataToSql()
+        public bool SyncDataToSql()
         {
-           var cachedMessageIds = await _getCachedData.GetCachedMessageId();
-            if (cachedMessageIds != null) {
-                var response = await _apiService.ExecutePost<bool>(_msgMngClient,"/api/UserMessage/StoreCachedMessage", cachedMessageIds);
+            var cachedMessageIds = _getCachedData.GetCachedMessageId().Result;
+            if (cachedMessageIds != null)
+            {
+                var response = _apiService.ExecutePost<bool>(_msgMngClient, "/api/UserMessage/StoreCachedMessage", cachedMessageIds).Result;
                 if (response != null)
                 {
                     return response.data;
                 }
             }
             return false;
-
         }
+
     }
 }
