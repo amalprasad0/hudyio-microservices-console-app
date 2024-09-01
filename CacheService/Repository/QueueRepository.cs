@@ -26,14 +26,14 @@ namespace CacheService.Repository
 
                 _db.ListRightPush(messages.ToUserId, serializedValue);
                 _db.KeyExpire(messages.ToUserId, TimeSpan.FromHours(6));
-                response.Data = true;
-                response.Success=true;
+                response.data = true;
+                response.success =true;
             }
             catch(Exception ex) 
             {
-                response.Data = false;
-                response.Success=false;
-                response.ErrorMessage=ex.Message;
+                response.data = false;
+                response.success=false;
+                response.errorMessage=ex.Message;
             }
             return response;
         }
@@ -46,19 +46,19 @@ namespace CacheService.Repository
                 var serializedValues = _db.ListRange(key);
                 if (serializedValues.Length > 0)
                 {
-                    response.Data = serializedValues.Select(x => JsonConvert.DeserializeObject<T>(x)).ToList();
-                    response.Success = true;
+                    response.data = serializedValues.Select(x => JsonConvert.DeserializeObject<T>(x)).ToList();
+                    response.success = true;
                 }
                 else
                 {
-                    response.Success = false;
-                    response.ErrorMessage = "No messages found for the given key.";
+                    response.success = false;
+                    response.errorMessage = "No messages found for the given key.";
                 }
             }
             catch (Exception ex)
             {
-                response.Success = false;
-                response.ErrorMessage = $"An error occurred while retrieving the messages: {ex.Message}";
+                response.success = false;
+                response.errorMessage = $"An error occurred while retrieving the messages: {ex.Message}";
             }
 
             return response;
@@ -77,21 +77,21 @@ namespace CacheService.Repository
                     if (deserializedMessage.MessageId == messageId)
                     {
                         _db.ListRemove(userId, message); 
-                        response.Data = true;
-                        response.Success = true;
+                        response.data = true;
+                        response.success = true;
                         return response;
                     }
                 }
 
-                response.Data = false; 
-                response.Success = false;
-                response.ErrorMessage = "MessageId not found.";
+                response.data = false; 
+                response.success = false;
+                response.errorMessage = "MessageId not found.";
             }
             catch (Exception ex)
             {
-                response.Data = false;
-                response.Success = false;
-                response.ErrorMessage = ex.Message;
+                response.data = false;
+                response.success = false;
+                response.errorMessage = ex.Message;
             }
             return response;
         }

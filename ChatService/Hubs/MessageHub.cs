@@ -72,9 +72,10 @@ namespace ChatService.Hubs
             var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
             try
             {
+                var messageId = Guid.NewGuid().ToString();
                 var storeUserMessage = new StoreUserMessage
                 {
-                    cachedMessageId = 0,
+                    cachedMessageId = messageId,
                     messageContent = message,
                     fromUserId = int.Parse(userId),
                     toUserId = int.Parse(toUserId),
@@ -85,7 +86,7 @@ namespace ChatService.Hubs
                 await _messageService.StoreMessage(storeUserMessage);
                 if (string.IsNullOrEmpty(connectionId))
                 {
-                    var messageId = Guid.NewGuid().ToString();
+                    
                     var userMessage = new CacheMessage
                     {
                         ToUserId = "msg" + toUserId,

@@ -9,10 +9,10 @@ using UserMicroservices.Respository.MessageRepository;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Kestrel to listen on port 80
-builder.WebHost.ConfigureKestrel(serverOptions =>
+/*builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);
-});
+});*/
 
 // Add services to the container
 builder.Services.AddControllers();

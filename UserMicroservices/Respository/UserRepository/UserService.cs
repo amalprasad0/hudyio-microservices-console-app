@@ -191,6 +191,45 @@ namespace UserMicroservices.Respository.DAL
             }
             return response;
         }
+        public Response<List<int>> GetCachedUserIds()
+        {
+            var response = new Response<List<int>>
+            {
+                Data = new List<int>()
+            };
+            ;
+
+            try
+            {
+                var sqlHelper = new SqlHelper(_sqlDataAccess);
+                sqlHelper.ExecuteStoredProcedureWithResult(
+                   "usp_GetUserCachedUser",
+                   null, 
+                   reader =>
+                   {
+                       while (reader.Read()) 
+                       {
+                           response.Data.Add(reader.GetInt32(0)); 
+                       }
+
+                       response.Success = response.Data.Count > 0;
+
+                       if (!response.Success)
+                       {
+                           response.ErrorMessage = "No user found.";
+                       }
+                   });
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.ErrorMessage = ex.Message;
+            }
+
+            return response;
+        }
+
+
 
     }
 }

@@ -8,5 +8,6 @@ namespace UserMicroservices.Interface
         Response<bool> CheckOtpandRegisterUser(LoginParams loginParams);
         Response<bool> SaveConnectionId(SaveConnectionId saveConnectionId);
         Response<bool> RemoveConnectionId(string userId);
+        Response<List<int>> GetCachedUserIds();
     }
 }

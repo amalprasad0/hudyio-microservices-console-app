@@ -2,6 +2,7 @@
 using CacheService.Interfaces;
 using System;
 using CacheService.Models;
+using CacheService.Services;
 
 namespace CacheService.Controllers
 {
@@ -11,11 +12,15 @@ namespace CacheService.Controllers
     {
         private readonly IRedisCache _cacheRepository;
         private readonly IQueueCache _queueCache;
+        private readonly IGetCachedData _getCachedData;
+        private readonly ISyncDataToSql _syncDataToSql;
 
-        public CacheController(IRedisCache cacheRepository, IQueueCache queueCache)
+        public CacheController(IRedisCache cacheRepository, IQueueCache queueCache, IGetCachedData getCachedData,ISyncDataToSql syncDataToSql)
         {
             _cacheRepository = cacheRepository;
             _queueCache = queueCache;
+            _getCachedData = getCachedData;
+            _syncDataToSql = syncDataToSql;
         }
 
         [HttpGet("{key}")]
@@ -89,6 +94,13 @@ namespace CacheService.Controllers
             }
            Response<bool> response= _queueCache.DequeueMessageById(messageRemoval.userId, messageRemoval.messageId);
             return Ok(response);
+        }
+        [HttpGet("Test")]
+        public IActionResult Test()
+        {
+           
+          _syncDataToSql.SyncDataToSql();
+            return Ok();
         }
     }
 }

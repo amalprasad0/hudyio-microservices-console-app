@@ -87,7 +87,15 @@ namespace UserMicroservices.Controllers
             }
            
         }
-            [HttpGet]
+
+        [HttpGet]
+        [Route("getCachedUserIds")]
+        public IActionResult getCachedUserIds()
+        {
+            Response<List<int>> response=_userService.GetCachedUserIds();
+            return Ok(response);
+        }
+        [HttpGet]
         [Route("health")]
         public IActionResult checkHealth()
         {

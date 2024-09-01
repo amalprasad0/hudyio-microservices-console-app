@@ -3,6 +3,7 @@ using MessageManagementService.Utilities;
 using MessageManagementService.Models;
 using System.Data.SqlClient;
 using System.Data;
+using System.Reflection.Metadata;
 
 namespace MessageManagementService.Services.MsgStoreServices
 {
@@ -45,6 +46,34 @@ namespace MessageManagementService.Services.MsgStoreServices
                 response.ErrorMessage = ex.Message;
             }
             return response;    
+        }
+       public  Response<bool> StoreCachedMessage(List<string> cachedMessageId)
+        {
+
+            var parsedCacheIds = cachedMessageId.Count == 1 ? cachedMessageId[0] + "," : string.Join(",", cachedMessageId);
+            Response<bool> response =new Response<bool> { Success = false };
+            try
+            {
+                _sqlHelper.ExecuteStoredProcedureWithResult("usp_StoreCachedMessages",
+                    cmd =>
+                    {
+                        cmd.Parameters.AddWithValue("@MessageIds", parsedCacheIds);
+                    },
+                    reader =>
+                    {
+                        if (reader.Read())
+                        {
+                            response.Data = reader.GetBoolean(0);
+                        }
+                    }
+                    );
+                response.Success = true;
+            }catch(Exception ex)
+            {
+            response.Success = false;
+            response.ErrorMessage = ex.Message;
+            }
+            return response ;
         }
     }
 }
