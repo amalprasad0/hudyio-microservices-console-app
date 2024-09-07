@@ -22,7 +22,7 @@ namespace CacheService.Services
             {
                 var response = _apiService.ExecutePost<bool>(_msgMngClient, "/api/UserMessage/StoreCachedMessage", cachedMessageIds).Result;
                 if (response != null)
-                {
+                { 
                     return response.data;
                 }
             }

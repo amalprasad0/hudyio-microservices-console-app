@@ -95,7 +95,7 @@ namespace CacheService.Controllers
            Response<bool> response= _queueCache.DequeueMessageById(messageRemoval.userId, messageRemoval.messageId);
             return Ok(response);
         }
-        [HttpGet("Test")]
+        [HttpGet("SyncCachedData")]
         public IActionResult SqlCacheMigration()
         {
             Response<bool> response = new Response<bool>();

@@ -96,7 +96,7 @@ namespace ChatService.Hubs
                             MessageContent = message,
                             MessageTime = DateTime.Now,
                             SendByUser = Context.GetHttpContext().Request.Query["userId"].ToString(),
-                            MessageId = messageId + toUserId
+                            MessageId = messageId
 
                         }
                     };

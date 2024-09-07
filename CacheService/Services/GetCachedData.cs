@@ -33,12 +33,15 @@ namespace CacheService.CacheMigration
                 foreach (var userId in userIds)
                 {
                     var dequeuedMessage = _queueCache.GetAllMessages<UserMessage>($"msg" + userId);
-
-                    foreach (var message in dequeuedMessage.data)
+                    if(dequeuedMessage.data != null)
                     {
-                        if (message.MessageId != null)
-                            cachedMessageId.Add(message.MessageId);
+                        foreach (var message in dequeuedMessage.data)
+                        {
+                            if (message.MessageId != null)
+                                cachedMessageId.Add(message.MessageId);
+                        }
                     }
+                    
                 }
             }
             return cachedMessageId;
