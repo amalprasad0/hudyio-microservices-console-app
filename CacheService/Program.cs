@@ -30,6 +30,7 @@ builder.Services.AddScoped<IGetCachedData, GetCachedData>();
 builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<IGetCachedData, GetCachedData>();
 builder.Services.AddScoped<ISyncDataToSql,SyncCacheToSql>();
+builder.Services.AddScoped<IGetDBCacheUsercs,GetDBCachedUsers>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

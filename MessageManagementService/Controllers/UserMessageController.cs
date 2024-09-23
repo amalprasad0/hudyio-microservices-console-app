@@ -1,5 +1,6 @@
 ﻿using MessageManagementService.Interface;
 using MessageManagementService.Models;
+using MessageManagementService.Services.DBCacheService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MessageManagementService.Controllers
@@ -9,9 +10,11 @@ namespace MessageManagementService.Controllers
     public class UserMessageController:ControllerBase
     {
         private readonly IMessageManagement _messageManagement;
-        public UserMessageController(IMessageManagement messageManagement) 
+        private readonly IDBCacheService _dbcacheService;
+        public UserMessageController(IMessageManagement messageManagement, IDBCacheService cacheService)
         {
            _messageManagement = messageManagement;
+            _dbcacheService = cacheService;
         }
         [HttpPost]
         [Route("StoreMessage")]
@@ -31,6 +34,20 @@ namespace MessageManagementService.Controllers
                 return BadRequest("Request data is null");
             }
             var response = _messageManagement.StoreCachedMessage(cachedMessageIds);
+            return Ok(response);
+        }
+        [HttpGet]
+        [Route("GetDBCachedUserIds")]
+        public async Task<IActionResult> GetDbCachedUserIds()
+        {
+            Response<List<CachedUserIds>> response = await _dbcacheService.GetDBCachedUserIds();
+            return Ok(response);
+        }
+        [HttpPost]
+        [Route("GetCachedMessages")]
+        public async Task<IActionResult> GETDBCachedMessages(int userId)
+        {
+            Response<List<DBCachedMessages>> response=await _dbcacheService.GetDBCachedMessages(userId);
             return Ok(response);
         }
     }

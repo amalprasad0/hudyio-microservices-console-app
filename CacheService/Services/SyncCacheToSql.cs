@@ -9,7 +9,6 @@ namespace CacheService.Services
         private HttpClient _msgMngClient;
         private ApiService _apiService;
         public SyncCacheToSql(IGetCachedData getCachedData,ApiService apiService, IHttpClientFactory clientFactory)
-        
        { 
             _getCachedData = getCachedData;
             _msgMngClient = clientFactory.CreateClient("MessageMngService");

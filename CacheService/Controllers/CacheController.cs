@@ -14,13 +14,15 @@ namespace CacheService.Controllers
         private readonly IQueueCache _queueCache;
         private readonly IGetCachedData _getCachedData;
         private readonly ISyncDataToSql _syncDataToSql;
+        private readonly IGetDBCacheUsercs _getDBCacheUsers;
 
-        public CacheController(IRedisCache cacheRepository, IQueueCache queueCache, IGetCachedData getCachedData,ISyncDataToSql syncDataToSql)
+        public CacheController(IRedisCache cacheRepository, IQueueCache queueCache, IGetCachedData getCachedData,ISyncDataToSql syncDataToSql,IGetDBCacheUsercs getDBCacheUsercs)
         {
             _cacheRepository = cacheRepository;
             _queueCache = queueCache;
             _getCachedData = getCachedData;
             _syncDataToSql = syncDataToSql;
+            _getDBCacheUsers= getDBCacheUsercs;
         }
 
         [HttpGet("{key}")]
@@ -104,5 +106,13 @@ namespace CacheService.Controllers
             response.data = isSuccess;
           return Ok(response);
         }
+        [HttpGet("RemoveCachedMessages")]
+        public async Task<IActionResult> TestAPI()
+        {
+            var result = await _getDBCacheUsers.RemoveDbCachedMSg();
+            return Ok(result);
+        }
+
+        }
     }
-}
+

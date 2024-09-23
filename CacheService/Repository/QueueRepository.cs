@@ -69,7 +69,6 @@ namespace CacheService.Repository
             try
             {
                 var messages = _db.ListRange(userId);
-
                 foreach (var message in messages)
                 {
                     var deserializedMessage = System.Text.Json.JsonSerializer.Deserialize<UserMessage>(message);
@@ -82,7 +81,6 @@ namespace CacheService.Repository
                         return response;
                     }
                 }
-
                 response.data = false; 
                 response.success = false;
                 response.errorMessage = "MessageId not found.";

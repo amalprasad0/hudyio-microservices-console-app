@@ -1,4 +1,5 @@
 using MessageManagementService.Interface;
+using MessageManagementService.Services.DBCacheService;
 using MessageManagementService.Services.MsgStoreServices;
 using MessageManagementService.Utilities;
 using System.Data.SqlTypes;
@@ -15,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMessageManagement,MessageManagement>();
+builder.Services.AddScoped<IDBCacheService, DBCacheService>();
 builder.Services.AddScoped<SqlHelper>();
 var app = builder.Build();
 

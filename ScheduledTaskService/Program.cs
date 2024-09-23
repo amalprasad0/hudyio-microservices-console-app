@@ -35,7 +35,7 @@ builder.Services.AddHttpClient("CacheService", client =>
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(); 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -48,8 +48,11 @@ var syncSQLData = app.Services.GetRequiredService<SyncSQLData>();
 syncSQLData.ScheduleApiDataFetchJob(
     "synccache",
     "/api/Cache/SyncCachedData",
-    "0 0 * * *"); // runs at midnight
-
+    "0 0 * * *");
+syncSQLData.ScheduleApiDataFetchJob(
+    "removeCache",
+    "/api/Cache/RemoveCachedMessages",
+    "0 0 * * *");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
