@@ -5,16 +5,22 @@ using System.Reflection.PortableExecutable;
 using UserMicroservices.Repository.HelperRepository;
 using UserMicroservices.Dependencies;
 using UserMicroservices.Respository.MessageRepository;
-
+using UserMicroservices.ProtoContracts;
+using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel to listen on port 80
-/*builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(80);
-});*/
+
 
 // Add services to the container
+builder.Services.AddGrpc(options =>
+{
+    //options.KeepAlive = new TimeSpan(0, 0, 60); // 60 second keepalive
+    options.MaxReceiveMessageSize = 1024 * 1024 * 10; // 10 MB
+    options.MaxSendMessageSize = 1024 * 1024 * 10; // 10 MB
+    options.EnableDetailedErrors = true;
+});
+builder.Services.AddGrpcReflection();
 builder.Services.AddControllers();
 builder.Services.AddScoped<SqlDataAccess>();
 builder.Services.AddScoped<IUser, UserMember>();
@@ -23,16 +29,24 @@ builder.Services.AddScoped<Fast2SmsApi>();
 builder.Services.AddScoped<IMessage, MessageService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<UserServicePc>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 
+    app.MapGrpcReflectionService();
+}
+
+// Configure gRPC
+app.MapGrpcService<UserServicePc>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

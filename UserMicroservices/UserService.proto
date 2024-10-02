@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package usermicroservices;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message createUser {
+    string name = 1;
+    string email = 2;
+    string phone = 3;
+    string isDisabled = 4;
+}
+
+message loginParams {
+    int32 otp = 1;
+    int32 userId = 2;
+}
+
+message LoginUser {
+    string email = 1;
+    string password = 2;
+    string username = 3;
+}
+
+message saveConnectionId {
+    string connectionId = 1;
+    string userId = 2;
+}
+
+message UserData {
+    string name = 1;
+    string username = 2;
+    string phone = 3;
+    string email = 4;
+    google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp modifiedAt = 6;
+    string createdBy = 7;
+    string modifiedBy = 8;
+}
+
+message UserId {
+    repeated int32 userId = 1;
+}
+
+message UserMessage {
+    int32 cachedMessageId = 1;
+    string messageContent = 2;
+    int32 fromUserId = 3;
+    int32 toUserId = 4;
+    bool hasFile = 5;
+    string fileUrl = 6;
+    string fileType = 7;
+}
+
+message Response {
+    bool success = 1;
+    string errorMessage = 2;
+}
+
+message CreateUserResponse {
+    int32 userId = 1;
+    string message = 2;
+}
+
+message CachedUserIdsResponse {
+    repeated int32 userIds = 1;
+}
+
+service UserService {
+    rpc CreateUser (createUser) returns (CreateUserResponse);
+
+    rpc CheckOtpAndActivateUser (loginParams) returns (Response);
+
+    rpc SaveConnectionId (saveConnectionId) returns (Response);
+
+    rpc RemoveConnectionId (UserId) returns (Response);
+
+    rpc GetCachedUserIds (google.protobuf.Empty) returns (CachedUserIdsResponse);
+
+    rpc CheckHealth (google.protobuf.Empty) returns (google.protobuf.Empty);
+}
