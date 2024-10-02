@@ -7,5 +7,6 @@ namespace ChatService.Interface
         Task<bool> AddToCacheQueue(CacheMessage cacheMessage);
         Task GetAllQueuedMessages(string userId, string connectionId);
         Task<bool> RemoveCachedMessage(string userId, string messageId);
+        Task GetAllDBQueuedMessages(string userId, string connectionId);
     }
 }

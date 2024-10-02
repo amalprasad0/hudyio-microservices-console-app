@@ -54,8 +54,8 @@ namespace ChatService.Hubs
                 return;
             }
 
-            await _messageQueueService.GetAllQueuedMessages(userId, Context.ConnectionId);
-
+           // await _messageQueueService.GetAllQueuedMessages(userId, Context.ConnectionId);
+            await _messageQueueService.GetAllDBQueuedMessages(userId, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception exception)

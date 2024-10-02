@@ -10,7 +10,7 @@ namespace ChatService.Repository
 {
     public class UserMessageRepository : IMessageQueue
     {
-        private readonly HttpClient _cacheClient;
+        private readonly HttpClient _cacheClient,_messageClient;
         private readonly ILogger<UserMessageRepository> _logger;
         private readonly ApiUtility _apiUtility;
         private readonly IHubContext<MessageHub> _hubContext;
@@ -19,6 +19,7 @@ namespace ChatService.Repository
         public UserMessageRepository(IHttpClientFactory clientFactory, ILogger<UserMessageRepository> logger, ApiUtility apiUtility, IHubContext<MessageHub> hubContext, CacheServiceClient cacheServiceClient)
         {
             _cacheClient = clientFactory.CreateClient("CacheService");
+            _messageClient=clientFactory.CreateClient("MessageService");
             _logger = logger;
             _apiUtility = apiUtility;
             _hubContext = hubContext;
@@ -74,6 +75,34 @@ namespace ChatService.Repository
             };
              var response=await _cacheServiceClient.GetDeliveryReport(messageRemovalData);
              return response.data;
+        }
+        public async Task GetAllDBQueuedMessages(string userId, string connectionId)
+        {
+            try
+            {
+                var response = await _apiUtility.MessageGetApi<List<RecievedUserMessages>>($"/api/UserMessage/GetCachedMessages?userId={userId}");
+                if (!response.success)
+                {
+                    _logger.LogError($"Failed to retrieve messages. Error: {response.errorMessage}");
+                }
+                if (response.data == null)
+                {
+                    return;
+                }
+
+                if (response.data.Count > 0)
+                {
+                    foreach (var message in response.data)
+                    {
+                        _logger.LogInformation($"{message.messageContent}");
+                        await _hubContext.Clients.Client(connectionId).SendAsync("RecievedMessage", message.sendByUser, message.messageContent, message.messageTime, message.messageId ?? "Not Available");
+                    }
+                }
+            }
+            catch (Exception ex) 
+            { 
+              throw(ex);
+            }
         }
     }
 }

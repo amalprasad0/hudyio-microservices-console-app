@@ -51,6 +51,6 @@ namespace ChatService.Utilities
         public Task<Response<T>> MessagePostApi<T>(string endpoint, object payload) =>
             ExecuteApiRequest<T>(() => _messageClient.PostAsync(endpoint, JsonContent.Create(payload)));
         public Task<Response<T>> MessageGetApi<T>(string endpoint) =>
-           ExecuteApiRequest<T>(() => _cacheClient.GetAsync(endpoint));
+           ExecuteApiRequest<T>(() => _messageClient.GetAsync(endpoint));
     }
 }

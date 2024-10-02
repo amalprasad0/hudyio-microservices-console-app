@@ -105,7 +105,7 @@ namespace MessageManagementService.Services.DBCacheService
                         {
                             DBCachedMessages dBCachedMessages = new DBCachedMessages
                             {
-                                sendByUser = reader.GetInt32(0),
+                                sendByUser = reader.GetInt32(0).ToString(),
                                 messageTime = reader.GetDateTime(1),
                                 messageContent = reader.GetString(2),
                                 messageId=reader.GetString(3),

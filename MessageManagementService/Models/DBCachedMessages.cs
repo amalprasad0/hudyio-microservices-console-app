@@ -4,7 +4,7 @@
     {
         public string messageContent { get; set; }
         public DateTime messageTime { get; set; }
-        public int sendByUser { get; set; }
+        public string sendByUser { get; set; }
         public string messageId { get; set; }
     }
 }

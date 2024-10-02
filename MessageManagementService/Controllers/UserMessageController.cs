@@ -43,7 +43,7 @@ namespace MessageManagementService.Controllers
             Response<List<CachedUserIds>> response = await _dbcacheService.GetDBCachedUserIds();
             return Ok(response);
         }
-        [HttpPost]
+        [HttpGet]
         [Route("GetCachedMessages")]
         public async Task<IActionResult> GETDBCachedMessages(int userId)
         {
