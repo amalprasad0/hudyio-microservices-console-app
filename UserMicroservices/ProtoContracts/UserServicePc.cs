@@ -28,7 +28,9 @@ namespace UserMicroservices.ProtoContracts
             return Task.FromResult(new CreateUserResponse
             {
                 UserId = result.Data,
-                Message = result.Success ? "User created successfully" : result.ErrorMessage
+                Success=result.Success,
+                ErrorMessage = result.ErrorMessage == null ? string.Empty : result.ErrorMessage
+                
             });
         }
 

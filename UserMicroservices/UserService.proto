@@ -60,7 +60,8 @@ message Response {
 
 message CreateUserResponse {
     int32 userId = 1;
-    string message = 2;
+    bool success = 2;
+    string errorMessage=3;
 }
 
 message CachedUserIdsResponse {

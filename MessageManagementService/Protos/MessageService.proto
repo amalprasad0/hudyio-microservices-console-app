@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package messagemanagementservice;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message userMessage {
+    string cachedMessageId = 1;
+    string messageContent = 2;
+    int32 fromUserId = 3;
+    int32 toUserId = 4;
+    bool hasFile = 5;
+    string fileUrl = 6;
+    string fileType = 7;
+}
+
+message cachedUserIds {
+    int32 userId = 1;
+    repeated string cacheIds = 2;
+}
+
+message dBCachedMessages {
+    string messageContent = 1;
+    google.protobuf.Timestamp messageTime = 2;
+    string sendByUser = 3;
+    string messageId = 4;
+}
+
+message ApiResponse {
+    bool success = 1;
+    string errorMessage = 2;
+    bool data=4;
+}
+
+message CachedUserIdsResponse {
+    bool success = 1;
+    repeated cachedUserIds data = 2;
+    string errorMessage = 3;
+}
+
+message DBCachedMessagesResponse {
+    bool success = 1;
+    repeated dBCachedMessages data = 2;
+    string errorMessage = 3;
+}
+
+message storeCachedMessageRequest {
+    repeated string cachedMessageIds = 1;
+}
+message GetCachedMessagesRequest {
+    int32 userId = 1;
+}
+
+
+
+service MessageService {
+    rpc StoreUserMessage (userMessage) returns (ApiResponse);
+    rpc StoreCachedMessage (storeCachedMessageRequest) returns (ApiResponse);
+    rpc GetDBCachedUserIds (google.protobuf.Empty) returns (CachedUserIdsResponse);
+    rpc GetCachedMessages (GetCachedMessagesRequest) returns (DBCachedMessagesResponse);
+}
