@@ -50,6 +50,24 @@ namespace MessageManagementService.ProtoContracts
                 Success = response.Success
             });
         }
-        
+        public override async Task<CachedUserIdsResponse> GetDBCachedUserIds(Empty empty, ServerCallContext context)
+        {
+            var response = await _dbcacheService.GetDBCachedUserIds();
+            var userIdresponse = new CachedUserIdsResponse
+            {
+                Success = response.Success,
+                ErrorMessage = response.ErrorMessage == null ? string.Empty : response.ErrorMessage,
+                Data = { }
+            };
+            foreach (var cachedUser in response.Data)
+            {
+                userIdresponse.Data.Add(new cachedUserIds
+                {
+                    UserId = cachedUser.userId,
+                    CacheIds = { cachedUser.cacheIds } 
+                });
+            }
+            return userIdresponse;
+        }
     }
 }
