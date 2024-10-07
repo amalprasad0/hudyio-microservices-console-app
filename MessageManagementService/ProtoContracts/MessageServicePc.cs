@@ -69,5 +69,17 @@ namespace MessageManagementService.ProtoContracts
             }
             return userIdresponse;
         }
+        public override Task<DBCachedMessagesResponse> GetCachedMessages(GetCachedMessagesRequest request, ServerCallContext context) {
+            var userRequest = Convert.ToInt32(request.UserId);
+            var response = _dbcacheService.GetDBCachedMessages(userRequest);
+            var userResponse = new DBCachedMessagesResponse
+            {
+                Success=response.Result.Success,
+                Data = {},
+                ErrorMessage=response.Result?.ErrorMessage==null ? string.Empty : response.Result.ErrorMessage,
+            };
+            userResponse.Data.AddRange(userResponse.Data);
+            return Task.FromResult(userResponse);
+        }
     }
 }
