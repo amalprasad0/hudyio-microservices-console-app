@@ -5,6 +5,7 @@
 - [Technologies Used](#technologies-used)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
+- [System Design Diagram](#system-design-diagram)
 - [Setup and Installation](#setup-and-installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
@@ -46,10 +47,13 @@ This project follows a microservices architecture where each service is responsi
 - **User Service:** Manages user registration and authentication.
 - **Notification Service:** Sends real-time updates to users.
 
+## System Design Diagram
+![System Design Diagram](https://github.com/amalprasad0/hudyio-microservices-console-app/blob/master/CHATAPP%20SYSTEM%20DESIGN.png?raw=true)
+
 ## Setup and Installation
 To set up and run the Chat Application API System locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/chat-application-api.git
+   git clone https://github.com/amalprasad0/chat-application-api.git
    cd chat-application-api
