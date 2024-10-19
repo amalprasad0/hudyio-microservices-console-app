@@ -30,9 +30,7 @@ namespace MessageManagementService.Controllers
         [Route("StoreCachedMessage")]
         public IActionResult StoreCachedMessage(List<string> cachedMessageIds)
         {
-            if (cachedMessageIds == null) {
-                return BadRequest("Request data is null");
-            }
+          
             var response = _messageManagement.StoreCachedMessage(cachedMessageIds);
             return Ok(response);
         }

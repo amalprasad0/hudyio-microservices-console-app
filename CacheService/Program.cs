@@ -6,8 +6,15 @@ using CacheService.Services;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddGrpc(options =>
+{
+    //options.KeepAlive = new TimeSpan(0, 0, 60); // 60 second keepalive
+    options.MaxReceiveMessageSize = 1024 * 1024 * 10; // 10 MB
+    options.MaxSendMessageSize = 1024 * 1024 * 10; // 10 MB
+    options.EnableDetailedErrors = true;
+});
 builder.Services.AddControllers();
+builder.Services.AddGrpcReflection();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRedisCache, CacheRespository>();
@@ -34,10 +41,12 @@ builder.Services.AddScoped<IGetDBCacheUsercs,GetDBCachedUsers>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    app.MapGrpcReflectionService();
 }
 
 app.UseHttpsRedirection();

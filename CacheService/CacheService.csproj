@@ -9,6 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="Google.Protobuf" Version="3.28.2" />
+	  <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
+	  <PackageReference Include="Grpc.AspNetCore.Server.ClientFactory" Version="2.66.0" />
+	  <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.66.0" />
+	  <PackageReference Include="Grpc.Tools" Version="2.66.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SimpleLINQ.StackExchange.Redis" Version="0.1.1" />
@@ -16,4 +24,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ProtoContracts\" />
+    <Folder Include="Protos\" />
+	  <Protobuf Include="Protos\CachingService.proto" GrpcServices="Server" />
+  </ItemGroup>
 </Project>

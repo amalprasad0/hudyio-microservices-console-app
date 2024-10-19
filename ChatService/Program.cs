@@ -27,7 +27,9 @@ builder.Services.AddHttpClient("MessageService", client =>
     client.BaseAddress = new Uri("https://localhost:7213");
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 });
+//grpc
 
+//end of grpc
 /*builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);

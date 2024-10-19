@@ -36,7 +36,6 @@ namespace CacheService.Controllers
             return new ObjectResult(value);
         }
 
-
         [HttpPost("set")]
         public IActionResult Set([FromBody] CacheEntry entry)
         {
@@ -58,6 +57,7 @@ namespace CacheService.Controllers
             }
             return Ok(isRemoved);
         }
+
         [HttpPost("SaveMessages")]
         public IActionResult AddQueueMessage(SaveRecentMessages saveRecentMessages)
         {
@@ -69,6 +69,7 @@ namespace CacheService.Controllers
            Response<bool> response = _queueCache.EnqueueMessage(saveRecentMessages);
             return Ok(response);
         }
+
         [HttpGet("GetMessages")]
         public IActionResult DequeueMessage(string key)
         {
@@ -87,6 +88,7 @@ namespace CacheService.Controllers
                 return NotFound("No messages in the queue or key does not exist");
             }
         }
+
         [HttpPost("Removecachedmessage")]
         public IActionResult RemoveCachedMessage(CachedMessageRemoval messageRemoval)
         {
@@ -97,6 +99,7 @@ namespace CacheService.Controllers
            Response<bool> response= _queueCache.DequeueMessageById(messageRemoval.userId, messageRemoval.messageId);
             return Ok(response);
         }
+
         [HttpGet("SyncCachedData")]
         public IActionResult SqlCacheMigration()
         {
@@ -106,6 +109,7 @@ namespace CacheService.Controllers
             response.data = isSuccess;
           return Ok(response);
         }
+
         [HttpGet("RemoveCachedMessages")]
         public async Task<IActionResult> TestAPI()
         {
@@ -113,6 +117,6 @@ namespace CacheService.Controllers
             return Ok(result);
         }
 
-        }
     }
+}
 

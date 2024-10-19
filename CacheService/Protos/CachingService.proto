@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package cachingservice;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message CacheEntry {
+  string key = 1;
+  string value = 2;
+  google.protobuf.Timestamp expiration = 3;
+}
+
+message CachedMessageRemoval {
+  string userId = 1;
+  string messageId = 2;
+}
+
+message DBCachedUserIds {
+  int32 userId = 1;
+  repeated string cacheIds = 2;
+}
+
+message Response {
+  bool success = 1;
+  string errorMessage = 2;
+}
+
+message ResponseData {
+  bool success = 1;
+  string data = 2; 
+  string errorMessage = 3;
+}
+
+message SaveRecentMessages {
+  string toUserId = 1;
+  UserMessage messageData = 2;
+}
+
+message UserMessage {
+  string messageContent = 1;
+  google.protobuf.Timestamp messageTime = 2;
+  string sendByUser = 3;
+  string messageId = 4;
+}
+
+message GetCacheRequest {
+  string key = 1;
+}
+
+message RemoveCacheRequest {
+  string key = 1;
+}
+
+service CachingService {
+  rpc GetCache(GetCacheRequest) returns (ResponseData);
+  
+  rpc SetCache(CacheEntry) returns (Response);
+  
+  rpc RemoveCache(RemoveCacheRequest) returns (Response);
+  
+  rpc SaveMessages(SaveRecentMessages) returns (Response);
+  
+  rpc GetMessages(GetCacheRequest) returns (ResponseData);
+  
+  rpc RemoveCachedMessage(CachedMessageRemoval) returns (Response);
+  
+  rpc SyncCachedData(google.protobuf.Empty) returns (Response);
+ 
+  rpc RemoveCachedMessages(google.protobuf.Empty) returns (ResponseData);
+}
